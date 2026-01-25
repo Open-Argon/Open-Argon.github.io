@@ -1,73 +1,201 @@
-<html>
-    <head>
-        <title>Open Argon - Chloride</title>
-        <meta name="viewport" content="width=device-width, user-scalable=no">
-        <link rel="stylesheet" href="style.css" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Open Argon – Chloride</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="/apple-touch-icon.png"
-        />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="32x32"
-            href="/favicon-32x32.png"
-        />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="194x194"
-            href="/favicon-194x194.png"
-        />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="192x192"
-            href="/android-chrome-192x192.png"
-        />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="16x16"
-            href="/favicon-16x16.png"
-        />
-        <link rel="manifest" href="/site.webmanifest" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#2596be" />
-        <meta name="msapplication-TileColor" content="#ffffff" />
-        <meta name="msapplication-TileImage" content="/mstile-144x144.png" />
-        <meta name="theme-color" content="#ffffff" />
-    </head>
-    <body style="
-    background-color: #090909;
-">
-        <div class="header" style="
-    background-color: #272727;
-    border-bottom: 1rem solid #181818;
-">
-            <img src="logos/chloride_logo.png" alt="Chloride Logo" class="logo" style="
-    background-color: transparent;
-" />
-            <h1 class="title">Chloride</h1>
-            <p>
-                Chloride is the modern C-based interpreter for the Argon programming
-                language. It provides a faster and more efficient runtime, a unified object
-                model, and a clean bytecode virtual machine designed to support Argon’s
-                long-term evolution. Chloride maintains the familiar behaviour of the older
-                argon-v3 interpreter while offering a more consistent foundation for new
-                language features and tooling.
-            </p>
-        </div>
-        <div class="main">
-            <p>
-                Chloride, the modern C-based interpreter for Argon, is available on GitHub.
-                You can explore its source code, follow development, and contribute to the
-                project at
-                <a href="https://git.wbell.dev/Open-Argon/Chloride" target="_blank">
-                    git.wbell.dev/Open-Argon/Chloride
-                </a>.
-            </p>
-        </div>
-    </body>
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="194x194" href="/favicon-194x194.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#2596be" />
+
+  <meta name="theme-color" content="#090909" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #090909;
+      --panel: #181818;
+      --panel-strong: #272727;
+      --border: #1f1f1f;
+      --text: #e6e6e6;
+      --muted: #a1a1a1;
+      --accent: #2596be;
+      --radius: 14px;
+      --max-width: 1100px;
+      --glow-x: 50%;
+      --glow-y: 20%;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: radial-gradient(circle at var(--glow-x) var(--glow-y), rgba(37,150,190,0.08), transparent 60%), var(--bg);
+      background-attachment: fixed;
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+    }
+
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 2rem 1.5rem; }
+
+    header { background: linear-gradient(180deg, var(--panel-strong), var(--panel)); border-bottom: 1px solid var(--border); }
+    .hero { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: center; }
+    .logo { width: 96px; height: 96px; object-fit: contain; }
+    .title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin: 0; letter-spacing: -0.02em; }
+    .subtitle { color: var(--muted); max-width: 70ch; margin-top: 0.75rem; }
+
+    main { flex: 1; padding-top: 3rem; padding-bottom: 4rem; }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card.visible { opacity: 1; transform: translateY(0); }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(37,150,190,0.12), transparent 40%);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+
+    .card:hover::after { opacity: 1; }
+    .card h2 { margin-top: 0; font-size: 1.4rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.25rem; }
+    .button { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.1rem; border-radius: 10px; border: 1px solid var(--border); background: var(--panel-strong); color: var(--text); font-weight: 500; transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease; }
+    .button.primary { background: linear-gradient(180deg, rgba(37,150,190,0.25), rgba(37,150,190,0.15)); border-color: rgba(37,150,190,0.5); }
+    .button:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+    footer { border-top: 1px solid var(--border); color: var(--muted); padding: 2rem 0; font-size: 0.9rem; }
+
+    @media (max-width: 700px) {
+      .hero { grid-template-columns: 1fr; text-align: center; }
+      .logo { margin: 0 auto; }
+      .subtitle { margin-left: auto; margin-right: auto; }
+      .actions { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container hero">
+      <img src="logos/chloride_logo.png" alt="Chloride Logo" class="logo" />
+      <div>
+        <h1 class="title">Chloride</h1>
+        <p class="subtitle">
+          Chloride is a modern C-based interpreter for the Argon programming language. It delivers a faster runtime, a unified object model, and a clean bytecode virtual machine designed to support Argon’s long-term evolution, introducing a new syntax and modernized language features.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>About Chloride</h2>
+      <p>Chloride is a C-based interpreter for the Argon programming language. It is released as libre software and respects your freedom to run, study, modify, and share it. Both the source code and the distributed binaries are fully freedom-respecting.</p>
+      <p>Designed as a replacement for the older Go-based interpreter, Chloride provides a more efficient runtime and a cleaner, more consistent execution model with modernized syntax.</p>
+    </section>
+
+    <section class="card" style="margin-top: 2rem;">
+      <h2>How It Works</h2>
+      <p>Chloride compiles Argon source code into bytecode and executes it using a dedicated virtual machine. This replaces the previous AST-walking interpreter and results in predictable execution, lower memory usage, and improved performance.</p>
+      <p>The runtime is written in C with an emphasis on minimal allocations, clear ownership rules, and efficient object handling. This keeps the interpreter fast, understandable, and easy to extend.</p>
+    </section>
+
+    <section class="card" style="margin-top: 2rem;">
+      <h2>Language Model</h2>
+      <p>Every value in Chloride is a first-class object. Numbers, strings, functions, and classes all follow the same object model, ensuring consistent behaviour across the language.</p>
+      <p>Classes are real objects with proper inheritance and introspection support. This avoids special cases in the interpreter and provides a solid foundation for future language features.</p>
+    </section>
+
+    <section class="card" style="margin-top: 2rem;">
+      <h2>Source & Development</h2>
+      <p>Chloride is developed openly. You can browse the source code, follow development, and contribute via the Open Argon Gitea instance.</p>
+      <div class="actions">
+        <a class="button primary" href="https://git.wbell.dev/Open-Argon/Chloride" target="_blank" rel="noopener">View Repository</a>
+        <a class="button" href="https://git.wbell.dev/Open-Argon" target="_blank" rel="noopener">Open Argon Organisation</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">© <span id="year"></span> Open Argon · Chloride Interpreter</div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.card').forEach(card => observer.observe(card));
+
+    const root = document.documentElement;
+    let lastX = 50;
+    let lastY = 20;
+    function updateGlow(x, y) {
+      root.style.setProperty('--glow-x', `${x}%`);
+      root.style.setProperty('--glow-y', `${y}%`);
+    }
+    updateGlow(lastX, lastY);
+
+    window.addEventListener('pointermove', e => {
+      if (e.pointerType === 'mouse') {
+        lastX = (e.clientX / window.innerWidth) * 100;
+        lastY = (e.clientY / window.innerHeight) * 100;
+        updateGlow(lastX, lastY);
+      }
+    }, { passive: true });
+
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        card.style.setProperty('--mx', `${x}%`);
+        card.style.setProperty('--my', `${y}%`);
+      });
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Tab') document.body.classList.add('show-focus');
+    });
+  </script>
+
+</body>
 </html>
