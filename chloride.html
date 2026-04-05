@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Open Argon – Chloride</title>
+  <title>Open Argon - Chloride</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Favicons -->
@@ -112,7 +112,7 @@
       <div>
         <h1 class="title">Chloride</h1>
         <p class="subtitle">
-          Chloride is a modern C-based interpreter for the Argon programming language. It delivers a faster runtime, a unified object model, and a clean bytecode virtual machine designed to support Argon’s long-term evolution, introducing a new syntax and modernized language features.
+          Chloride is a modern C-based interpreter for the Argon programming language. It delivers a faster runtime, a unified object model, and a clean bytecode virtual machine designed to support Argon's long-term evolution, introducing a new syntax and modernized language features.
         </p>
       </div>
     </div>
@@ -165,30 +165,75 @@
 
     document.querySelectorAll('.card').forEach(card => observer.observe(card));
 
+    // Ambient background glow: drifts to random positions with ease-in-out
     const root = document.documentElement;
-    let lastX = 50;
-    let lastY = 20;
-    function updateGlow(x, y) {
-      root.style.setProperty('--glow-x', `${x}%`);
-      root.style.setProperty('--glow-y', `${y}%`);
+    let currentX = 50, currentY = 20;
+    let targetX = 50, targetY = 20;
+    let startX = 50, startY = 20;
+    let startTime = null;
+    const GLOW_DURATION = 4000;
+
+    function easeInOut(t) {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
     }
-    updateGlow(lastX, lastY);
 
-    window.addEventListener('pointermove', e => {
-      if (e.pointerType === 'mouse') {
-        lastX = (e.clientX / window.innerWidth) * 100;
-        lastY = (e.clientY / window.innerHeight) * 100;
-        updateGlow(lastX, lastY);
-      }
-    }, { passive: true });
+    function pickNewTarget() {
+      startX = currentX;
+      startY = currentY;
+      targetX = 10 + Math.random() * 80;
+      targetY = 10 + Math.random() * 80;
+      startTime = null;
+    }
 
+    function animateGlow(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const t = Math.min((timestamp - startTime) / GLOW_DURATION, 1);
+      const e = easeInOut(t);
+      currentX = startX + (targetX - startX) * e;
+      currentY = startY + (targetY - startY) * e;
+      root.style.setProperty('--glow-x', `${currentX}%`);
+      root.style.setProperty('--glow-y', `${currentY}%`);
+      if (t >= 1) pickNewTarget();
+      requestAnimationFrame(animateGlow);
+    }
+
+    pickNewTarget();
+    requestAnimationFrame(animateGlow);
+
+    // Card inner glow: snaps on entry, then ease-in-out tweens to new mouse positions
     document.querySelectorAll('.card').forEach(card => {
+      let cx = 50, cy = 50;
+      let tx = 50, ty = 50;
+      let rafId = null;
+      const DECAY = 0.025; // smooth but responsive — tweak up/down to taste
+
+      function tickCard() {
+        cx += (tx - cx) * DECAY;
+        cy += (ty - cy) * DECAY;
+        card.style.setProperty('--mx', `${cx}%`);
+        card.style.setProperty('--my', `${cy}%`);
+        rafId = requestAnimationFrame(tickCard);
+      }
+
+      card.addEventListener('mouseenter', e => {
+        const rect = card.getBoundingClientRect();
+        cx = tx = ((e.clientX - rect.left) / rect.width) * 100;
+        cy = ty = ((e.clientY - rect.top) / rect.height) * 100;
+        card.style.setProperty('--mx', `${cx}%`);
+        card.style.setProperty('--my', `${cy}%`);
+        if (!rafId) rafId = requestAnimationFrame(tickCard);
+      });
+
       card.addEventListener('mousemove', e => {
         const rect = card.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-        card.style.setProperty('--mx', `${x}%`);
-        card.style.setProperty('--my', `${y}%`);
+        tx = ((e.clientX - rect.left) / rect.width) * 100;
+        ty = ((e.clientY - rect.top) / rect.height) * 100;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+        cx = tx; cy = ty;
       });
     });
 
